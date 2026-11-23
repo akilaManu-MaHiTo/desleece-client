@@ -1,3 +1,6 @@
+/* Cascade order: later layers win. MUI's styles go in `mui` (see main.tsx),
+   App.css classes in `components`, so Tailwind utilities override both. */
+@layer properties, theme, base, mui, components, utilities;
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -27,6 +30,13 @@
   --radius: 0.625rem;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
+
+  /* Brand palette (used in App.css; also available as Tailwind colors) */
+  --purple: #59116d;
+  --purple-deep: #32113f;
+  --lavender: #f0e7f2;
+  --cream: #fcf8f2;
+  --ink: #271f26;
 }
 
 @theme inline {
@@ -44,6 +54,11 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-border: var(--border);
   --color-ring: var(--ring);
+  --color-purple: var(--purple);
+  --color-purple-deep: var(--purple-deep);
+  --color-lavender: var(--lavender);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

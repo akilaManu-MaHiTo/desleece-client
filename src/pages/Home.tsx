@@ -1,62 +1,22 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Header from "../components/Header";
-import ProductCard, { type Product } from "../components/ProductCard";
+import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
-import type { PageProps } from "../routes";
+// import type { PageProps } from "../routes";
 import { useScrollMotion } from "../hooks/useScrollMotion";
 import cake1 from "../assets/cake-1.jpg";
 import cake2 from "../assets/cake-2.jpg";
 import cake3 from "../assets/cake-3.jpg";
 import cake4 from "../assets/cake-4.jpg";
-import cara1 from "../assets/cara-1.jpg";
-import cara2 from "../assets/cara-2.jpg";
-import cara3 from "../assets/cara-3.jpg";
-import cara4 from "../assets/cara-4.jpg";
 import cake from "../assets/big-cake.jpg";
-import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
-import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined';
-
-const products: Product[] = [
-  {
-    name: "Berry cloud",
-    description: "Vanilla sponge · berries · cream",
-    price: "₹1,250",
-    tag: "Bestseller",
-    image: cara1,
-  },
-  {
-    name: "Chocolate muse",
-    description: "Dark chocolate · ganache · sea salt",
-    price: "₹1,450",
-    image: cara2,
-  },
-  {
-    name: "Pistachio petal",
-    description: "Pistachio · rose · white chocolate",
-    price: "₹1,350",
-    tag: "New",
-    image: cara3,
-  },
-  {
-    name: "Red Velvet",
-    description: "Caramel · chocolate · hazelnut",
-    price: "₹1,550",
-    image: cara4,
-  },
-  {
-    name: "Orange Layer",
-    description: "Caramel · chocolate · hazelnut",
-    price: "₹1,550",
-    image: cake4,
-  },
-  {
-    name: "Chocolate Delight",
-    description: "Caramel · chocolate · hazelnut",
-    price: "₹1,550",
-    image: cake2,
-  },
-];
-const joyProducts = products.slice(0, 6);
+import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
+import CakeOutlinedIcon from "@mui/icons-material/CakeOutlined";
+import { useQuery } from "@tanstack/react-query";
+import { getMainCategory } from "../api/categoryApi";
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import { Link } from "react-router-dom";
+import { getCakes, type Cake } from "../api/cakeApi";
+import toast from "react-hot-toast";
 
 const heroImages = [
   {
@@ -77,13 +37,35 @@ const heroImages = [
   },
 ];
 
-function Home({ cartCount, onAddToCart }: PageProps) {
+function Home() {
   const shellRef = useRef<HTMLDivElement>(null);
+  const [bagIds, setBagIds] = useState<string[]>(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem("bagIds") ?? "[]");
+      return Array.isArray(saved)
+        ? saved.filter((id): id is string => typeof id === "string")
+        : [];
+    } catch {
+      return [];
+    }
+  });
   useScrollMotion(shellRef);
+
+  const { data: mainCategories } = useQuery({
+    queryKey: ["main-category"],
+    queryFn: getMainCategory,
+  });
+  const categories = Array.isArray(mainCategories) ? mainCategories : [];
+  const { data: cakes, isLoading } = useQuery({
+    queryKey: ["cakes"],
+    queryFn: getCakes,
+  });
+  const products: (Cake & { price: number })[] = Array.isArray(cakes) ? cakes : [];
+  const joyProducts = products.slice(0, 6);
 
   return (
     <div className="app-shell" ref={shellRef}>
-      <Header cartCount={cartCount} />
+      <Header cartCount={bagIds.length} />
       <main>
         <section className="hero-section" id="home">
           <div className="hero-copy" data-parallax data-y="-110">
@@ -97,11 +79,16 @@ function Home({ cartCount, onAddToCart }: PageProps) {
             </p>
             <div className="hero-actions">
               <a className="primary-button" href="#shop">
-                Explore cakes <span><ArrowOutwardOutlinedIcon fontSize="small"/></span>
+                Explore cakes{" "}
+                <span>
+                  <ArrowOutwardOutlinedIcon fontSize="small" />
+                </span>
               </a>
             </div>
             <div className="hero-note">
-              <span className="note-icon"><CakeOutlinedIcon fontSize="small"/></span>
+              <span className="note-icon">
+                <CakeOutlinedIcon fontSize="small" />
+              </span>
               <span>
                 Freshly baked to order
                 <br />
@@ -190,7 +177,10 @@ function Home({ cartCount, onAddToCart }: PageProps) {
               {[0, 1, 2, 3].map((set) => (
                 <div className="joy-set" key={set} aria-hidden={set > 0}>
                   {products.map((product, index) => (
-                    <figure className="joy-card" key={`${set}-${product.name}`}>
+                    <figure
+                      className="joy-card"
+                      key={`${set}-${index}-${product.name}`}
+                    >
                       <img
                         src={product.image}
                         alt={set === 0 ? product.name : ""}
@@ -211,18 +201,14 @@ function Home({ cartCount, onAddToCart }: PageProps) {
         <section className="category-strip" aria-label="Cake categories">
           <span data-reveal="up">Find your flavour</span>
           <div>
-            <a href="#shop" data-reveal="slide">
-              Birthday cakes
-            </a>
-            <a href="#shop" data-reveal="slide">
-              Wedding cakes
-            </a>
-            <a href="#shop" data-reveal="slide">
-              Dessert jars
-            </a>
-            <a href="#shop" data-reveal="slide">
-              Gift boxes
-            </a>
+            {categories.map((category, index) => (
+              <a
+                key={`${category._id || category.categoryName}-${index}`}
+                href="#shop"
+              >
+                {category.categoryName}
+              </a>
+            ))}
           </div>
         </section>
 
@@ -238,18 +224,32 @@ function Home({ cartCount, onAddToCart }: PageProps) {
                 <em>Or not.</em>
               </h2>
             </div>
-            <a className="text-link" href="#shop" data-reveal="up">
-              View all cakes <span>→</span>
-            </a>
+            <Link className="text-accent-foreground" to="/shop" data-reveal="up">
+              View all cakes <ArrowRightAltIcon fontSize="small" />
+            </Link>
           </div>
           <div className="product-grid">
-            {joyProducts.map((product) => (
-              <ProductCard
-                key={product.name}
-                product={product}
-                onAddToCart={onAddToCart}
-              />
-            ))}
+            {isLoading
+              ? Array.from({ length: 6 }, (_, index) => (
+                  <ProductCard
+                    key={`loading-cake-${index}`}
+                    isLoading
+                  />
+                ))
+              : joyProducts.map((product, index) => (
+                  <ProductCard
+                    key={`${product.name}-${index}`}
+                    product={product}
+                    onAddToCart={(productId) => {
+                      setBagIds((ids) => {
+                        const nextIds = [...ids, productId]
+                        window.localStorage.setItem("bagIds", JSON.stringify(nextIds))
+                        return nextIds
+                      })
+                      toast.success(`Lovely choice. ${product.name} is in your bag.`)
+                    }}
+                  />
+                ))}
           </div>
         </section>
 
