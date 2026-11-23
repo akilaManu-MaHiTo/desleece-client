@@ -46,6 +46,7 @@ function Home() {
     queryKey: ["main-category"],
     queryFn: getMainCategory,
   });
+  const categories = Array.isArray(mainCategories) ? mainCategories : [];
 
   return (
     <div className="app-shell" ref={shellRef}>
@@ -161,7 +162,10 @@ function Home() {
               {[0, 1, 2, 3].map((set) => (
                 <div className="joy-set" key={set} aria-hidden={set > 0}>
                   {products.map((product, index) => (
-                    <figure className="joy-card" key={`${set}-${product.name}`}>
+                    <figure
+                      className="joy-card"
+                      key={`${set}-${index}-${product.name}`}
+                    >
                       <img
                         src={product.image}
                         alt={set === 0 ? product.name : ""}
@@ -182,8 +186,11 @@ function Home() {
         <section className="category-strip" aria-label="Cake categories">
           <span data-reveal="up">Find your flavour</span>
           <div>
-            {mainCategories?.map((category) => (
-              <a key={category._id} href="#shop">
+            {categories.map((category, index) => (
+              <a
+                key={`${category._id || category.categoryName}-${index}`}
+                href="#shop"
+              >
                 {category.categoryName}
               </a>
             ))}
@@ -207,9 +214,9 @@ function Home() {
             </Link>
           </div>
           <div className="product-grid">
-            {joyProducts.map((product) => (
+            {joyProducts.map((product, index) => (
               <ProductCard
-                key={product.name}
+                key={`${product.name}-${index}`}
                 product={product}
                 // onAddToCart={onAddToCart}
               />
