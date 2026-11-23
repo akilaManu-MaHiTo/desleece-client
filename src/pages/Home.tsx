@@ -16,7 +16,8 @@ import cake from "../assets/big-cake.jpg";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import CakeOutlinedIcon from "@mui/icons-material/CakeOutlined";
 import { useQuery } from "@tanstack/react-query";
-import { getMainCategory, type MainCategory } from "../api/categoryApi";
+import { getMainCategory } from "../api/categoryApi";
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 
 const products: Product[] = [
   {
@@ -243,9 +244,9 @@ function Home() {
                 <em>Or not.</em>
               </h2>
             </div>
-            <a className="text-link" href="#shop" data-reveal="up">
-              View all cakes <span>→</span>
-            </a>
+            <button className="text-accent-foreground " data-reveal="up">
+              View all cakes <ArrowRightAltIcon fontSize="small" />
+            </button>
           </div>
           <div className="product-grid">
             {joyProducts.map((product) => (
