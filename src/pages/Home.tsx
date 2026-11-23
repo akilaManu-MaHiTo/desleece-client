@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import Header from "../components/Header";
-import ProductCard, { type Product } from "../components/ProductCard";
+import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
 // import type { PageProps } from "../routes";
 import { useScrollMotion } from "../hooks/useScrollMotion";
@@ -8,57 +8,15 @@ import cake1 from "../assets/cake-1.jpg";
 import cake2 from "../assets/cake-2.jpg";
 import cake3 from "../assets/cake-3.jpg";
 import cake4 from "../assets/cake-4.jpg";
-import cara1 from "../assets/cara-1.jpg";
-import cara2 from "../assets/cara-2.jpg";
-import cara3 from "../assets/cara-3.jpg";
-import cara4 from "../assets/cara-4.jpg";
 import cake from "../assets/big-cake.jpg";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import CakeOutlinedIcon from "@mui/icons-material/CakeOutlined";
 import { useQuery } from "@tanstack/react-query";
 import { getMainCategory } from "../api/categoryApi";
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import { Link } from "react-router-dom";
+import { products } from "../data/products";
 
-const products: Product[] = [
-  {
-    name: "Berry cloud",
-    description: "Vanilla sponge · berries · cream",
-    price: "₹1,250",
-    tag: "Bestseller",
-    image: cara1,
-  },
-  {
-    name: "Chocolate muse",
-    description: "Dark chocolate · ganache · sea salt",
-    price: "₹1,450",
-    image: cara2,
-  },
-  {
-    name: "Pistachio petal",
-    description: "Pistachio · rose · white chocolate",
-    price: "₹1,350",
-    tag: "New",
-    image: cara3,
-  },
-  {
-    name: "Red Velvet",
-    description: "Caramel · chocolate · hazelnut",
-    price: "₹1,550",
-    image: cara4,
-  },
-  {
-    name: "Orange Layer",
-    description: "Caramel · chocolate · hazelnut",
-    price: "₹1,550",
-    image: cake4,
-  },
-  {
-    name: "Chocolate Delight",
-    description: "Caramel · chocolate · hazelnut",
-    price: "₹1,550",
-    image: cake2,
-  },
-];
 const joyProducts = products.slice(0, 6);
 
 const heroImages = [
@@ -244,9 +202,9 @@ function Home() {
                 <em>Or not.</em>
               </h2>
             </div>
-            <button className="text-accent-foreground " data-reveal="up">
+            <Link className="text-accent-foreground" to="/shop" data-reveal="up">
               View all cakes <ArrowRightAltIcon fontSize="small" />
-            </button>
+            </Link>
           </div>
           <div className="product-grid">
             {joyProducts.map((product) => (

@@ -560,6 +560,385 @@
   .shop-section {
     padding: 110px 7%;
   }
+  .shop-hero {
+    align-items: end;
+    display: grid;
+    gap: 10%;
+    grid-template-columns: 1.15fr 0.85fr;
+    min-height: 390px;
+    padding: 70px 7% 82px;
+  }
+  .shop-hero h1 {
+    font-size: clamp(56px, 7vw, 94px);
+    margin-bottom: 0;
+  }
+  .shop-hero-copy {
+    max-width: 360px;
+    padding-bottom: 7px;
+  }
+  .shop-hero-copy > p {
+    color: var(--muted-foreground);
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 26px;
+  }
+  /* clip (unlike hidden) doesn't create a scroll container, so the category nav can stick. */
+  .app-shell.shop-page {
+    overflow: clip;
+  }
+  .catalog-section {
+    padding: 90px 0 105px;
+  }
+  .catalog-heading {
+    align-items: end;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 7%;
+  }
+  .catalog-heading .eyebrow {
+    margin-bottom: 20px;
+  }
+  .catalog-count {
+    color: var(--muted-foreground);
+    font-size: 12px;
+    margin-bottom: 7px;
+  }
+
+  /* Sticky category nav: jumps between shelves and follows the scroll. */
+  .shelf-nav {
+    backdrop-filter: blur(12px);
+    background: color-mix(in srgb, var(--lavender) 90%, transparent);
+    border-bottom: 1px solid rgba(89, 17, 109, 0.16);
+    display: flex;
+    gap: 32px;
+    margin-top: 55px;
+    overflow-x: auto;
+    padding: 20px 7% 0;
+    position: sticky;
+    scrollbar-width: none;
+    top: 0;
+    z-index: 5;
+  }
+  .shelf-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .shelf-nav a {
+    border-bottom: 2px solid transparent;
+    color: var(--muted-foreground);
+    font-size: 12px;
+    padding-bottom: 14px;
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+    white-space: nowrap;
+  }
+  .shelf-nav a sup {
+    font-family: "Playfair Display", serif;
+    font-size: 11px;
+    font-style: italic;
+    margin-left: 4px;
+    opacity: 0.7;
+  }
+  .shelf-nav a:hover,
+  .shelf-nav a.is-active {
+    border-bottom-color: var(--purple);
+    color: var(--purple);
+  }
+  .shelf-nav a:focus-visible {
+    color: var(--purple);
+    outline: 2px solid var(--purple);
+    outline-offset: 4px;
+  }
+
+  /* One shelf per category: stacked vertically, each scrolling sideways. */
+  .cake-shelf {
+    padding-top: 72px;
+    position: relative;
+    scroll-margin-top: 8px;
+  }
+  .cake-shelf + .cake-shelf {
+    margin-top: 32px;
+  }
+  .shelf-head {
+    align-items: end;
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    margin-bottom: 34px;
+    padding: 0 7%;
+  }
+  .shelf-title {
+    max-width: 540px;
+  }
+  .shelf-kicker {
+    align-items: baseline;
+    color: var(--purple);
+    display: flex;
+    font-size: 11px;
+    font-weight: 600;
+    gap: 14px;
+    letter-spacing: 2.2px;
+    margin: 0 0 16px;
+    text-transform: uppercase;
+  }
+  .shelf-kicker span {
+    color: var(--muted-foreground);
+    font-family: "Playfair Display", serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: none;
+  }
+  .shelf-title h3 {
+    color: var(--purple-deep);
+    font-family: "Playfair Display", serif;
+    font-size: clamp(28px, 2.8vw, 40px);
+    font-weight: 500;
+    letter-spacing: -1px;
+    line-height: 1.05;
+    margin-bottom: 14px;
+  }
+  .shelf-title h3 em {
+    color: var(--purple);
+  }
+  .shelf-note {
+    color: var(--muted-foreground);
+    font-size: 14px;
+    line-height: 1.75;
+    margin: 0;
+    max-width: 440px;
+  }
+  .shelf-controls {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    gap: 18px;
+  }
+  .shelf-count {
+    color: var(--muted-foreground);
+    font-size: 12px;
+  }
+  .shelf-hint {
+    display: none;
+  }
+  .shelf-arrows {
+    display: flex;
+    gap: 10px;
+  }
+  .shelf-arrows button {
+    align-items: center;
+    background: white;
+    border: 0;
+    border-radius: 50%;
+    color: var(--purple);
+    display: inline-flex;
+    height: 44px;
+    justify-content: center;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      opacity 0.2s,
+      transform 0.2s;
+    width: 44px;
+  }
+  .shelf-arrows button:hover:not(:disabled),
+  .shelf-arrows button:focus-visible {
+    background: var(--purple);
+    color: white;
+    outline: 0;
+  }
+  .shelf-arrows button:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+  .shelf-arrows button:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+  .shelf-track {
+    /* Edges dim to half strength rather than vanishing, so the light background
+       doesn't wash out the cake photos. */
+    --fade-start: 0px;
+    --fade-end: 0px;
+    --fade-start-edge: #000;
+    --fade-end-edge: #000;
+    display: flex;
+    gap: 22px;
+    mask-image: linear-gradient(
+      to right,
+      var(--fade-start-edge),
+      #000 var(--fade-start),
+      #000 calc(100% - var(--fade-end)),
+      var(--fade-end-edge)
+    );
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    padding: 0 7% 4px;
+    scroll-padding-inline: 7%;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .shelf-track::-webkit-scrollbar {
+    display: none;
+  }
+  .shelf-track.fade-start {
+    --fade-start: 4%;
+    --fade-start-edge: rgb(0 0 0 / 0.5);
+  }
+  .shelf-track.fade-end {
+    --fade-end: 4%;
+    --fade-end-edge: rgb(0 0 0 / 0.5);
+  }
+  .shelf-track > .product-card {
+    flex: 0 0 clamp(250px, 26vw, 340px);
+    scroll-snap-align: start;
+  }
+  .shelf-track .product-image {
+    aspect-ratio: 4 / 5;
+    height: auto;
+  }
+  .shelf-track .product-image img {
+    inset: 0;
+    position: absolute;
+  }
+  /* Mouse drag-to-scroll (see CakeShelf). Snapping pauses while dragging. */
+  @media (hover: hover) and (pointer: fine) {
+    .shelf-track.is-draggable {
+      cursor: grab;
+    }
+  }
+  .shelf-track[data-dragging] {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    user-select: none;
+  }
+  .shelf-track[data-dragging] > * {
+    pointer-events: none;
+  }
+
+  /* Custom scrollbar, inset to line up with the shelf heading. */
+  .shelf-scrollbar {
+    cursor: pointer;
+    height: 24px;
+    margin: 22px 7% 0;
+    position: relative;
+    touch-action: pan-y;
+  }
+  .shelf-scrollbar.is-hidden {
+    visibility: hidden;
+  }
+  .shelf-scrollbar::before,
+  .shelf-scrollbar-thumb {
+    border-radius: 999px;
+    height: 4px;
+    margin-top: -2px;
+    position: absolute;
+    top: 50%;
+    transition:
+      background 0.2s,
+      height 0.2s,
+      margin-top 0.2s;
+  }
+  .shelf-scrollbar::before {
+    background: rgba(89, 17, 109, 0.14);
+    content: "";
+    left: 0;
+    right: 0;
+  }
+  .shelf-scrollbar-thumb {
+    background: var(--purple);
+    cursor: grab;
+    left: 0;
+    width: 48px;
+  }
+  .shelf-scrollbar:hover::before,
+  .shelf-scrollbar[data-active]::before,
+  .shelf-scrollbar:hover .shelf-scrollbar-thumb,
+  .shelf-scrollbar[data-active] .shelf-scrollbar-thumb {
+    height: 8px;
+    margin-top: -4px;
+  }
+  .shelf-scrollbar:hover .shelf-scrollbar-thumb,
+  .shelf-scrollbar[data-active] .shelf-scrollbar-thumb {
+    background: var(--purple-deep);
+  }
+  .shelf-scrollbar[data-active],
+  .shelf-scrollbar[data-active] .shelf-scrollbar-thumb {
+    cursor: grabbing;
+  }
+
+  /* Gentle confirmation after adding a cake to the bag. */
+  .bag-note {
+    align-items: center;
+    background: var(--purple-deep);
+    border-radius: 999px;
+    bottom: 28px;
+    box-shadow: 0 18px 40px rgba(50, 17, 63, 0.25);
+    color: white;
+    display: flex;
+    font-size: 13px;
+    gap: 10px;
+    left: 50%;
+    max-width: calc(100% - 32px);
+    opacity: 0;
+    padding: 14px 22px;
+    pointer-events: none;
+    position: fixed;
+    transform: translate(-50%, 16px);
+    transition:
+      opacity 0.25s,
+      transform 0.25s,
+      visibility 0.25s;
+    visibility: hidden;
+    width: max-content;
+    z-index: 20;
+  }
+  .bag-note.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    visibility: visible;
+  }
+  .bag-note svg {
+    color: #e6bedf;
+    flex-shrink: 0;
+  }
+  .bag-note strong {
+    font-weight: 600;
+  }
+  .shop-order-note {
+    align-items: center;
+    display: grid;
+    gap: 8%;
+    grid-template-columns: 120px 1fr;
+    margin: 0 7%;
+    padding: 105px 7%;
+  }
+  .shop-order-note-mark {
+    align-items: center;
+    background: var(--purple);
+    border: 9px solid var(--lavender);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--purple);
+    color: white;
+    display: flex;
+    font-size: 31px;
+    height: 105px;
+    justify-content: center;
+    transform: rotate(12deg);
+    width: 105px;
+  }
+  .shop-order-note h2 {
+    font-size: clamp(31px, 3.4vw, 46px);
+    margin-bottom: 22px;
+  }
+  .shop-order-note > div:last-child > p:not(.eyebrow) {
+    color: var(--muted-foreground);
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 28px;
+    max-width: 480px;
+  }
   .section-heading {
     align-items: end;
     display: flex;
@@ -836,6 +1215,73 @@
     }
     .shop-section {
       padding: 75px 8%;
+    }
+    .shop-hero {
+      display: block;
+      min-height: 0;
+      padding: 60px 8% 75px;
+    }
+    .shop-hero h1 {
+      margin-bottom: 35px;
+    }
+    .shop-hero-copy {
+      max-width: 420px;
+    }
+    .catalog-section {
+      padding: 70px 0 80px;
+    }
+    .catalog-heading {
+      align-items: start;
+      padding: 0 8%;
+    }
+    .shelf-nav {
+      gap: 26px;
+      margin-top: 40px;
+      padding: 16px 8% 0;
+    }
+    .cake-shelf {
+      padding-top: 52px;
+    }
+    .cake-shelf + .cake-shelf {
+      margin-top: 20px;
+    }
+    .shelf-head {
+      align-items: start;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 26px;
+      padding: 0 8%;
+    }
+    .shelf-arrows {
+      display: none;
+    }
+    .shelf-hint {
+      color: var(--purple);
+      display: inline;
+      font-size: 12px;
+    }
+    .shelf-track {
+      gap: 16px;
+      padding: 0 8% 4px;
+      scroll-padding-inline: 8%;
+      scroll-snap-type: x mandatory;
+    }
+    .shelf-track > .product-card {
+      flex-basis: min(78vw, 340px);
+    }
+    .shelf-scrollbar {
+      margin: 16px 8% 0;
+    }
+    .bag-note {
+      bottom: 20px;
+    }
+    .shop-order-note {
+      display: block;
+      margin: 0 8%;
+      padding: 75px 0;
+    }
+    .shop-order-note-mark {
+      margin-bottom: 42px;
     }
     .product-grid {
       grid-template-columns: 1fr;

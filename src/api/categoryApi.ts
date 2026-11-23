@@ -4,6 +4,7 @@ import axios from "axios";
 export type MainCategory = {
   _id: string;
   categoryName: string;
+  note?: string;
 };
 
 export async function getMainCategory(): Promise<MainCategory[]> {

@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import HomePage from "./pages/Home";
+import ShopCakes from "./pages/ShopCakes";
 import useCurrentUser from "./hooks/useCurrentUser";
 import PageLoader from "./components/PageLoader";
 
@@ -24,6 +25,7 @@ const AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/shop" element={<ShopCakes />} />
 
       {/* <Route path="/admin/login" element={<AdminLogin />} /> */}
       <Route element={<ProtectedRoute />}>
