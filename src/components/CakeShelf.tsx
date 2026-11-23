@@ -2,14 +2,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import EastRoundedIcon from "@mui/icons-material/EastRounded";
 import WestRoundedIcon from "@mui/icons-material/WestRounded";
-import ProductCard, { type Product } from "./ProductCard";
+import ProductCard from "./ProductCard";
 import type { CategoryShelf } from "../data/categories";
 
 type CakeShelfProps = {
   shelf: CategoryShelf;
   index: number;
   total: number;
-  onAddToCart: (product: Product) => void;
+  onAddToCart: (productId: string) => void;
 };
 
 type ThumbDrag = {
@@ -349,7 +349,7 @@ function CakeShelf({ shelf, index, total, onAddToCart }: CakeShelfProps) {
             // Names can repeat in the sample data, so position keeps keys unique.
             key={`${product.name}-${position}`}
             product={product}
-            onAddToCart={() => onAddToCart(product)}
+            onAddToCart={(productId) => onAddToCart(productId)}
             reveal={false}
           />
         ))}

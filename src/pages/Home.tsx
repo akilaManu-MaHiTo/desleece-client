@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Header from "../components/Header";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
@@ -16,6 +16,7 @@ import { getMainCategory } from "../api/categoryApi";
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { Link } from "react-router-dom";
 import { getCakes, type Cake } from "../api/cakeApi";
+import toast from "react-hot-toast";
 
 const heroImages = [
   {
@@ -38,6 +39,16 @@ const heroImages = [
 
 function Home() {
   const shellRef = useRef<HTMLDivElement>(null);
+  const [bagIds, setBagIds] = useState<string[]>(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem("bagIds") ?? "[]");
+      return Array.isArray(saved)
+        ? saved.filter((id): id is string => typeof id === "string")
+        : [];
+    } catch {
+      return [];
+    }
+  });
   useScrollMotion(shellRef);
 
   const { data: mainCategories } = useQuery({
@@ -54,7 +65,7 @@ function Home() {
 
   return (
     <div className="app-shell" ref={shellRef}>
-      <Header />
+      <Header cartCount={bagIds.length} />
       <main>
         <section className="hero-section" id="home">
           <div className="hero-copy" data-parallax data-y="-110">
@@ -229,7 +240,14 @@ function Home() {
                   <ProductCard
                     key={`${product.name}-${index}`}
                     product={product}
-                    // onAddToCart={onAddToCart}
+                    onAddToCart={(productId) => {
+                      setBagIds((ids) => {
+                        const nextIds = [...ids, productId]
+                        window.localStorage.setItem("bagIds", JSON.stringify(nextIds))
+                        return nextIds
+                      })
+                      toast.success(`Lovely choice. ${product.name} is in your bag.`)
+                    }}
                   />
                 ))}
           </div>

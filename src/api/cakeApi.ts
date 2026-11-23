@@ -8,6 +8,9 @@ export type Cake = {
   tag?: string;
   category: string;
   image: string;
+  oneKilo?: number;
+  oneAndHalfKilo?: number;
+  twoKilo?: number;
 };
 
 type CakePayload = Partial<Cake>;
@@ -48,6 +51,12 @@ function normalizeCake(value: unknown): Cake | null {
 
   if (!Number.isFinite(price)) return null;
 
+  const optionalPrice = (value: unknown) => {
+    if (typeof value !== "number" && typeof value !== "string") return undefined;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  };
+
   return {
     _id: cake._id || "",
     name: cake.name,
@@ -56,6 +65,11 @@ function normalizeCake(value: unknown): Cake | null {
     tag: typeof cake.tag === "string" ? cake.tag : "",
     category: cake.category,
     image: cake.image,
+    oneKilo: optionalPrice((cake as Record<string, unknown>).oneKilo),
+    oneAndHalfKilo: optionalPrice(
+      (cake as Record<string, unknown>).oneAndHalfKilo,
+    ),
+    twoKilo: optionalPrice((cake as Record<string, unknown>).twoKilo),
   };
 }
 

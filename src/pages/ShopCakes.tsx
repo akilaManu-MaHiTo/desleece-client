@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
-import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import Header from "../components/Header";
 import CakeShelf from "../components/CakeShelf";
 import Footer from "../components/Footer";
@@ -11,8 +10,7 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { getMainCategory } from "../api/categoryApi";
 import { getCakesByCategory, type Cake } from "../api/cakeApi";
 import { useScrollMotion } from "../hooks/useScrollMotion";
-
-type BagNote = { name: string; visible: boolean };
+import toast from "react-hot-toast";
 
 // Module-level so React Query can memoize the combined list between renders.
 const combineCakes = (
@@ -50,8 +48,16 @@ function ShopCakes() {
     [mainCategories, products],
   );
   const [activeShelf, setActiveShelf] = useState(shelves[0]?.id ?? "");
-  const [cartCount, setCartCount] = useState(0);
-  const [bagNote, setBagNote] = useState<BagNote | null>(null);
+  const [bagIds, setBagIds] = useState<string[]>(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem("bagIds") ?? "[]");
+      return Array.isArray(saved)
+        ? saved.filter((id): id is string => typeof id === "string")
+        : [];
+    } catch {
+      return [];
+    }
+  });
   const catalogRef = useRef<HTMLElement>(null);
   const navRef = useRef<HTMLElement>(null);
 
@@ -101,24 +107,21 @@ function ShopCakes() {
     });
   }, [activeShelf]);
 
-  // Each add replaces the note object, which restarts the timer. The name stays while it fades out.
-  useEffect(() => {
-    if (!bagNote?.visible) return;
-    const timer = window.setTimeout(
-      () => setBagNote((note) => note && { ...note, visible: false }),
-      2800,
-    );
-    return () => window.clearTimeout(timer);
-  }, [bagNote]);
+  const handleAddToCart = (productId: string) => {
+    const product = products.find((item) => item._id === productId);
+    if (!product) return;
 
-  const handleAddToCart = (product: Product) => {
-    setCartCount((count) => count + 1);
-    setBagNote({ name: product.name, visible: true });
+    setBagIds((ids) => {
+      const nextIds = [...ids, productId];
+      window.localStorage.setItem("bagIds", JSON.stringify(nextIds));
+      return nextIds;
+    });
+    toast.success(`Lovely choice. ${product.name} is in your bag.`);
   };
 
   return (
     <div className="app-shell shop-page" ref={shellRef}>
-      <Header cartCount={cartCount} />
+      <Header cartCount={bagIds.length} />
       <main>
         <section className="shop-hero">
           <div>
@@ -247,17 +250,6 @@ function ShopCakes() {
         </section>
       </main>
       <Footer />
-
-      <div className={`bag-note${bagNote?.visible ? " is-visible" : ""}`} role="status" aria-live="polite">
-        {bagNote && (
-          <>
-            <FavoriteRoundedIcon fontSize="small" aria-hidden="true" />
-            <span>
-              Lovely choice. <strong>{bagNote.name}</strong> is in your bag.
-            </span>
-          </>
-        )}
-      </div>
     </div>
   );
 }
