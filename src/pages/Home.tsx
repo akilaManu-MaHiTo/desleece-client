@@ -45,7 +45,7 @@ function Home() {
     queryFn: getMainCategory,
   });
   const categories = Array.isArray(mainCategories) ? mainCategories : [];
-  const { data: cakes } = useQuery({
+  const { data: cakes, isLoading } = useQuery({
     queryKey: ["cakes"],
     queryFn: getCakes,
   });
@@ -218,13 +218,20 @@ function Home() {
             </Link>
           </div>
           <div className="product-grid">
-            {joyProducts.map((product, index) => (
-              <ProductCard
-                key={`${product.name}-${index}`}
-                product={product}
-                // onAddToCart={onAddToCart}
-              />
-            ))}
+            {isLoading
+              ? Array.from({ length: 6 }, (_, index) => (
+                  <ProductCard
+                    key={`loading-cake-${index}`}
+                    isLoading
+                  />
+                ))
+              : joyProducts.map((product, index) => (
+                  <ProductCard
+                    key={`${product.name}-${index}`}
+                    product={product}
+                    // onAddToCart={onAddToCart}
+                  />
+                ))}
           </div>
         </section>
 

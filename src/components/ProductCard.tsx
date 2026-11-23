@@ -9,12 +9,40 @@ type Product = {
 }
 
 type ProductCardProps = {
-  product: Product
+  product?: Product
   onAddToCart?: () => void
   reveal?: boolean
+  isLoading?: boolean
 }
 
-function ProductCard({ product, onAddToCart, reveal = true }: ProductCardProps) {
+function ProductCard({
+  product,
+  onAddToCart,
+  reveal = true,
+  isLoading = false,
+}: ProductCardProps) {
+  if (isLoading) {
+    return (
+      <article
+        className="product-card product-card-loading"
+        aria-busy="true"
+        aria-label="Loading cake"
+        {...(reveal ? { "data-reveal": "tilt" } : {})}
+      >
+        <div className="product-image skeleton-block" />
+        <div className="product-info product-info-loading">
+          <div className="skeleton-text-group">
+            <span className="skeleton-block skeleton-title" />
+            <span className="skeleton-block skeleton-description" />
+          </div>
+          <span className="skeleton-block skeleton-price" />
+        </div>
+      </article>
+    )
+  }
+
+  if (!product) return null
+
   return (
     <article className="product-card" {...(reveal ? { "data-reveal": "tilt" } : {})}>
       <div className="product-image">

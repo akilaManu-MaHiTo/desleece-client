@@ -649,12 +649,38 @@
     outline: 2px solid var(--purple);
     outline-offset: 4px;
   }
+  .shelf-nav-skeleton {
+    display: block;
+    height: 14px;
+    margin-bottom: 14px;
+    width: 90px;
+  }
 
   /* One shelf per category: stacked vertically, each scrolling sideways. */
   .cake-shelf {
     padding-top: 72px;
     position: relative;
     scroll-margin-top: 8px;
+  }
+  .cake-shelf-loading {
+    pointer-events: none;
+  }
+  .shelf-kicker-skeleton {
+    display: block;
+    height: 10px;
+    margin-bottom: 14px;
+    width: 120px;
+  }
+  .shelf-title-skeleton {
+    display: block;
+    height: 34px;
+    width: min(280px, 60vw);
+  }
+  .shelf-note-skeleton {
+    display: block;
+    height: 12px;
+    margin-top: 12px;
+    width: min(220px, 50vw);
   }
   .cake-shelf + .cake-shelf {
     margin-top: 32px;
@@ -955,6 +981,61 @@
   }
   .product-card {
     min-width: 0;
+  }
+  .product-card-loading {
+    pointer-events: none;
+  }
+  .product-card-loading .product-image {
+    min-height: 360px;
+  }
+  .skeleton-block {
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    background:
+      linear-gradient(
+        90deg,
+        rgb(115 84 140 / 0.08) 25%,
+        rgb(115 84 140 / 0.18) 50%,
+        rgb(115 84 140 / 0.08) 75%
+      );
+    background-size: 200% 100%;
+  }
+  .product-info-loading {
+    width: 100%;
+  }
+  .skeleton-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .skeleton-title {
+    display: block;
+    height: 21px;
+    width: 150px;
+  }
+  .skeleton-description {
+    display: block;
+    height: 11px;
+    width: 110px;
+  }
+  .skeleton-price {
+    display: block;
+    flex: 0 0 auto;
+    height: 14px;
+    margin-top: 5px;
+    width: 60px;
+  }
+  @keyframes skeleton-shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-block {
+      animation: none;
+    }
   }
   .product-image {
     background: var(--lavender);
