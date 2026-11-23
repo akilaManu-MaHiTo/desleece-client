@@ -2,7 +2,7 @@ import { useRef } from "react";
 import Header from "../components/Header";
 import ProductCard, { type Product } from "../components/ProductCard";
 import Footer from "../components/Footer";
-import type { PageProps } from "../routes";
+// import type { PageProps } from "../routes";
 import { useScrollMotion } from "../hooks/useScrollMotion";
 import cake1 from "../assets/cake-1.jpg";
 import cake2 from "../assets/cake-2.jpg";
@@ -13,8 +13,10 @@ import cara2 from "../assets/cara-2.jpg";
 import cara3 from "../assets/cara-3.jpg";
 import cara4 from "../assets/cara-4.jpg";
 import cake from "../assets/big-cake.jpg";
-import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
-import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined';
+import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
+import CakeOutlinedIcon from "@mui/icons-material/CakeOutlined";
+import { useQuery } from "@tanstack/react-query";
+import { getMainCategory, type MainCategory } from "../api/categoryApi";
 
 const products: Product[] = [
   {
@@ -77,13 +79,18 @@ const heroImages = [
   },
 ];
 
-function Home({ cartCount, onAddToCart }: PageProps) {
+function Home() {
   const shellRef = useRef<HTMLDivElement>(null);
   useScrollMotion(shellRef);
 
+  const { data: mainCategories } = useQuery({
+    queryKey: ["main-category"],
+    queryFn: getMainCategory,
+  });
+
   return (
     <div className="app-shell" ref={shellRef}>
-      <Header cartCount={cartCount} />
+      <Header />
       <main>
         <section className="hero-section" id="home">
           <div className="hero-copy" data-parallax data-y="-110">
@@ -97,11 +104,16 @@ function Home({ cartCount, onAddToCart }: PageProps) {
             </p>
             <div className="hero-actions">
               <a className="primary-button" href="#shop">
-                Explore cakes <span><ArrowOutwardOutlinedIcon fontSize="small"/></span>
+                Explore cakes{" "}
+                <span>
+                  <ArrowOutwardOutlinedIcon fontSize="small" />
+                </span>
               </a>
             </div>
             <div className="hero-note">
-              <span className="note-icon"><CakeOutlinedIcon fontSize="small"/></span>
+              <span className="note-icon">
+                <CakeOutlinedIcon fontSize="small" />
+              </span>
               <span>
                 Freshly baked to order
                 <br />
@@ -211,18 +223,11 @@ function Home({ cartCount, onAddToCart }: PageProps) {
         <section className="category-strip" aria-label="Cake categories">
           <span data-reveal="up">Find your flavour</span>
           <div>
-            <a href="#shop" data-reveal="slide">
-              Birthday cakes
-            </a>
-            <a href="#shop" data-reveal="slide">
-              Wedding cakes
-            </a>
-            <a href="#shop" data-reveal="slide">
-              Dessert jars
-            </a>
-            <a href="#shop" data-reveal="slide">
-              Gift boxes
-            </a>
+            {mainCategories?.map((category) => (
+              <a key={category._id} href="#shop">
+                {category.categoryName}
+              </a>
+            ))}
           </div>
         </section>
 
@@ -247,7 +252,7 @@ function Home({ cartCount, onAddToCart }: PageProps) {
               <ProductCard
                 key={product.name}
                 product={product}
-                onAddToCart={onAddToCart}
+                // onAddToCart={onAddToCart}
               />
             ))}
           </div>

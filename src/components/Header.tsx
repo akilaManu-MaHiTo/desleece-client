@@ -3,7 +3,7 @@ import logo from "../assets/DeSleece Logo.png";
 import Bag from "../assets/bag-check.svg";
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 type HeaderProps = {
-  cartCount: number;
+  cartCount?: number;
 };
 
 function Header({ cartCount }: HeaderProps) {

@@ -8,7 +8,7 @@ type Product = {
 
 type ProductCardProps = {
   product: Product
-  onAddToCart: () => void
+  onAddToCart?: () => void
 }
 
 function ProductCard({ product, onAddToCart }: ProductCardProps) {

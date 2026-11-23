@@ -1,15 +1,21 @@
-import { useState } from 'react'
-import { routes } from './routes'
-import { useSmoothScroll } from './hooks/useSmoothScroll'
-import './App.css'
+import AppRoutes from "./routes";
+import { useSmoothScroll } from "./hooks/useSmoothScroll";
+import "./App.css";
+import { QueryClientProvider } from "@tanstack/react-query";
+import queryClient from "./state/queryClient.ts";
+import { BrowserRouter } from "react-router-dom";
 
+// Main Functional Component for the App
 function App() {
-  useSmoothScroll()
-  const [cartCount, setCartCount] = useState(0)
-  const currentPath = window.location.pathname
-  const Page = routes[currentPath] ?? routes['/']
+  useSmoothScroll();
 
-  return <Page cartCount={cartCount} onAddToCart={() => setCartCount((count) => count + 1)} />
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
 }
 
-export default App
+export default App;
