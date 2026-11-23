@@ -6,21 +6,38 @@ import Header from "../components/Header";
 import CakeShelf from "../components/CakeShelf";
 import Footer from "../components/Footer";
 import type { Product } from "../components/ProductCard";
-import { products } from "../data/products";
 import { groupProductsByCategory } from "../data/categories";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { getMainCategory } from "../api/categoryApi";
+import { getCakesByCategory, type Cake } from "../api/cakeApi";
+import { useScrollMotion } from "../hooks/useScrollMotion";
 
 type BagNote = { name: string; visible: boolean };
 
+// Module-level so React Query can memoize the combined list between renders.
+const combineCakes = (results: { data?: Cake[] }[]): Product[] =>
+  results.flatMap((result) => (Array.isArray(result.data) ? result.data : []));
+
 function ShopCakes() {
+  // Drives the footer's data-reveal fade-ins; without it they stay at opacity 0.
+  const shellRef = useRef<HTMLDivElement>(null);
+  useScrollMotion(shellRef);
+
   const { data: mainCategories } = useQuery({
     queryKey: ["main-category"],
     queryFn: getMainCategory,
   });
+  const categories = Array.isArray(mainCategories) ? mainCategories : [];
+  const products: Product[] = useQueries({
+    queries: categories.map((category) => ({
+      queryKey: ["cakes", "category", category.categoryName],
+      queryFn: () => getCakesByCategory(category.categoryName),
+    })),
+    combine: combineCakes,
+  });
   const shelves = useMemo(
     () => groupProductsByCategory(products, mainCategories),
-    [mainCategories],
+    [mainCategories, products],
   );
   const [activeShelf, setActiveShelf] = useState(shelves[0]?.id ?? "");
   const [cartCount, setCartCount] = useState(0);
@@ -80,7 +97,7 @@ function ShopCakes() {
   };
 
   return (
-    <div className="app-shell shop-page">
+    <div className="app-shell shop-page" ref={shellRef}>
       <Header cartCount={cartCount} />
       <main>
         <section className="shop-hero">

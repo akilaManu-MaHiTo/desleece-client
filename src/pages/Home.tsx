@@ -15,9 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getMainCategory } from "../api/categoryApi";
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { Link } from "react-router-dom";
-import { products } from "../data/products";
-
-const joyProducts = products.slice(0, 6);
+import { getCakes, type Cake } from "../api/cakeApi";
 
 const heroImages = [
   {
@@ -47,6 +45,12 @@ function Home() {
     queryFn: getMainCategory,
   });
   const categories = Array.isArray(mainCategories) ? mainCategories : [];
+  const { data: cakes } = useQuery({
+    queryKey: ["cakes"],
+    queryFn: getCakes,
+  });
+  const products: (Cake & { price: number })[] = Array.isArray(cakes) ? cakes : [];
+  const joyProducts = products.slice(0, 6);
 
   return (
     <div className="app-shell" ref={shellRef}>

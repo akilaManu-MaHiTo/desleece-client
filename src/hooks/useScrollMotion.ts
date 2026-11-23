@@ -112,36 +112,44 @@ export function useScrollMotion(rootRef: RefObject<HTMLElement | null>) {
 
     const mobileQuery = window.matchMedia('(max-width: 767.98px)')
 
-    const parallax: ParallaxItem[] = [...root.querySelectorAll<HTMLElement>('[data-parallax]')].map((el) => ({
-      el,
-      section: sectionOf(el),
-      x: numberAttr(el, 'x'),
-      y: numberAttr(el, 'y'),
-      rotate: numberAttr(el, 'rotate'),
-      scale: numberAttr(el, 'scale'),
-      box: { top: 0, height: 0 },
-      restProgress: 0,
-    }))
+    let parallax: ParallaxItem[] = []
+    let reveals: RevealItem[] = []
+    let marquees: MarqueeItem[] = []
 
-    const reveals: RevealItem[] = [...root.querySelectorAll<HTMLElement>('[data-reveal]')].map((el) => {
-      const variant = el.dataset.reveal
-      return {
+    // (Re)collect opted-in elements. Runs again whenever the DOM under root changes, so content
+    // rendered after async data loads (product cards, marquee items) is picked up too.
+    function collect() {
+      parallax = [...root!.querySelectorAll<HTMLElement>('[data-parallax]')].map((el) => ({
         el,
-        variant: variant === 'tilt' || variant === 'slide' ? variant : 'up',
-        top: 0,
-        index: 0,
-        start: 0,
-        end: 1,
-        alwaysShown: false,
-      }
-    })
+        section: sectionOf(el),
+        x: numberAttr(el, 'x'),
+        y: numberAttr(el, 'y'),
+        rotate: numberAttr(el, 'rotate'),
+        scale: numberAttr(el, 'scale'),
+        box: { top: 0, height: 0 },
+        restProgress: 0,
+      }))
 
-    const marquees: MarqueeItem[] = [...root.querySelectorAll<HTMLElement>('[data-marquee]')].map((el) => ({
-      el,
-      section: sectionOf(el),
-      box: { top: 0, height: 0 },
-      period: 0,
-    }))
+      reveals = [...root!.querySelectorAll<HTMLElement>('[data-reveal]')].map((el) => {
+        const variant = el.dataset.reveal
+        return {
+          el,
+          variant: variant === 'tilt' || variant === 'slide' ? variant : 'up',
+          top: 0,
+          index: 0,
+          start: 0,
+          end: 1,
+          alwaysShown: false,
+        }
+      })
+
+      marquees = [...root!.querySelectorAll<HTMLElement>('[data-marquee]')].map((el) => ({
+        el,
+        section: sectionOf(el),
+        box: { top: 0, height: 0 },
+        period: 0,
+      }))
+    }
 
     let parallaxFactor = 1
 
@@ -229,21 +237,41 @@ export function useScrollMotion(rootRef: RefObject<HTMLElement | null>) {
       schedule()
     }
 
+    collect()
     measure()
     render()
+
+    let collectFrame = 0
+    const recollect = () => {
+      if (collectFrame) return
+      collectFrame = requestAnimationFrame(() => {
+        collectFrame = 0
+        collect()
+        measure()
+        render()
+      })
+    }
 
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', remeasure)
     window.addEventListener('load', remeasure)
     const resizeObserver = new ResizeObserver(remeasure)
     resizeObserver.observe(root)
+    // Only childList changes: our own inline style writes don't trigger this.
+    const mutationObserver = new MutationObserver(recollect)
+    mutationObserver.observe(root, { childList: true, subtree: true })
+    // Late-loading images change layout (and the marquee period) without resizing root.
+    root.addEventListener('load', remeasure, true)
 
     return () => {
       cancelAnimationFrame(frame)
+      cancelAnimationFrame(collectFrame)
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', remeasure)
       window.removeEventListener('load', remeasure)
+      root.removeEventListener('load', remeasure, true)
       resizeObserver.disconnect()
+      mutationObserver.disconnect()
       for (const { el } of [...parallax, ...marquees]) el.style.removeProperty('transform')
       for (const { el } of reveals) {
         for (const prop of ['opacity', 'translate', 'rotate', 'scale']) el.style.removeProperty(prop)

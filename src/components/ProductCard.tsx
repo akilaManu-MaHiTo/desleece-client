@@ -1,7 +1,8 @@
 type Product = {
+  _id?: string
   name: string
   description: string
-  price: string
+  price: number
   image: string
   category?: string
   tag?: string
@@ -28,7 +29,7 @@ function ProductCard({ product, onAddToCart, reveal = true }: ProductCardProps) 
           <h3>{product.name}</h3>
           <p>{product.description}</p>
         </div>
-        <strong>{product.price}</strong>
+        <strong>Rs. {product.price.toLocaleString("en-LK")}</strong>
       </div>
     </article>
   )
