@@ -817,7 +817,8 @@
     --fade-end-edge: rgb(0 0 0 / 0.5);
   }
   .shelf-track > .product-card {
-    flex: 0 0 clamp(250px, 26vw, 340px);
+    flex: 0 0 calc((100% - 22px) / 2);
+    max-width: 340px;
     scroll-snap-align: start;
   }
   .shelf-track .product-image {
@@ -1505,13 +1506,38 @@
       font-size: 12px;
     }
     .shelf-track {
-      gap: 16px;
+      gap: 12px;
       padding: 0 8% 4px;
       scroll-padding-inline: 8%;
       scroll-snap-type: x mandatory;
     }
     .shelf-track > .product-card {
-      flex-basis: min(78vw, 340px);
+      flex-basis: calc((100% - 12px) / 2);
+      max-width: none;
+    }
+    .shelf-track .product-info {
+      gap: 8px;
+    }
+    .shelf-track .product-info h3 {
+      font-size: clamp(15px, 4vw, 18px);
+      line-height: 1.15;
+      margin-bottom: 4px;
+    }
+    .shelf-track .product-info p {
+      display: -webkit-box;
+      font-size: 9px;
+      line-height: 1.35;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+    .shelf-track .product-info > strong {
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .shelf-track .quick-add {
+      font-size: 10px;
+      padding: 10px;
     }
     .shelf-scrollbar {
       margin: 16px 8% 0;
